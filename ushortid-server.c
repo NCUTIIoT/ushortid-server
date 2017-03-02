@@ -45,13 +45,13 @@ static void _releaser(void *ptr)
     free(ptr);
 }
 
+static AVL_TREE *treeById, *treeByAddr;
 static int ushortid_server(unsigned int port)
 {
     char buf[256];
     char ipstr[INET6_ADDRSTRLEN], moteaddr_str[32];
     MOTE_SHORT_ADDR received, sendbuf, *ptr;
     struct sockaddr_in6 from;
-    AVL_TREE *treeById, *treeByAddr;
     NODE *cur;
     ssize_t recvlen;
     socklen_t fromlen;
@@ -137,4 +137,18 @@ void *ushortid_server_entry(void *port_uint_ptr)
     unsigned int port = *(unsigned int *)port_uint_ptr;
     ushortid_server(port);
     return 0;
+}
+
+const unsigned char *ushortid_server_getAddrById(unsigned short id)
+{
+    MOTE_SHORT_ADDR key, *ptr;
+
+    ((unsigned char *)(&(key.id)))[0] = (id & 0xFF00) >> 8;
+    ((unsigned char *)(&(key.id)))[1] = (id & 0x00FF) >> 0;
+
+    ptr = AVL_Retrieve(treeByAddr, &key);
+    if (ptr)
+        return ptr->addr64b;
+    else
+        return 0;
 }

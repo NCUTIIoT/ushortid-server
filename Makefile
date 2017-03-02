@@ -3,8 +3,8 @@ CC=gcc
 CFLAGS=-Wall -Wextra -g3
 LFLAGS=
 
-OBJS=avl.o main.o ushortid-server.o
-DEPS=avl.h ushortid-server.h
+OBJS=avl.o main.o ushortid-server.o uhurricane-listener.o
+DEPS=avl.h ushortid-server.h uhurricane-listener.h
 LIBS=-lpthread
 
 BIN=svr

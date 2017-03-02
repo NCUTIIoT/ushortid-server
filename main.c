@@ -4,26 +4,43 @@
 #include <string.h>
 
 #include "ushortid-server.h"
+#include "uhurricane-listener.h"
 
-int main()
+static void launch_thread(pthread_t *outPid, void *(*entry)(void *), unsigned int *port)
 {
-    void *s;
-    pthread_t ushortid_svr;
-    unsigned int ushortid_svr_port = 15004;
     int r;
 
-    r = pthread_create(&ushortid_svr, NULL, ushortid_server_entry, &ushortid_svr_port);
+    r = pthread_create(outPid, NULL, entry, port);
     if (r)
     {
         fprintf(stderr, "[ERROR] pthread_create failed(%i)\n", r);
-        return 1;
+        exit(1);
     }
+}
 
-    r = pthread_join(ushortid_svr, &s);
+static void wair_thread(pthread_t *outPid)
+{
+    void *s;
+    int r;
+
+    r = pthread_join(*outPid, &s);
     if (r)
     {
         fprintf(stderr, "[ERROR] pthread_join failed(%i)\n", r);
-        return 1;
+        exit(1);
     }
+}
+
+int main()
+{
+    pthread_t ushortid_svr, uhurricane_listener;
+    unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003;
+
+    launch_thread(&ushortid_svr, ushortid_server_entry, &ushortid_svr_port);
+    launch_thread(&uhurricane_listener, uhurricane_listener_entry, &uhurricane_listener_port);
+
+    wair_thread(&ushortid_svr);
+    wair_thread(&uhurricane_listener);
+
     return 0;
 }
