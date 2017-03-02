@@ -32,7 +32,7 @@ static int uhurricane_listener(unsigned int port)
     while ((recvlen = recvfrom(sfd, buf, sizeof(buf), 0, (struct sockaddr *)&from, &fromlen)) != -1)
     {
         inet_ntop(from.sin6_family, &(from.sin6_addr), ipstr, sizeof(ipstr));
-        printf("recvfrom %s, port-%u\n", ipstr, ntohs(from.sin6_port));
+        //printf("recvfrom %s, port-%u\n", ipstr, ntohs(from.sin6_port));
     }
 
     close(sfd);

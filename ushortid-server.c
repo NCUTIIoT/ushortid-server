@@ -49,7 +49,7 @@ static AVL_TREE *treeById, *treeByAddr;
 static int ushortid_server(unsigned int port)
 {
     char buf[256];
-    char ipstr[INET6_ADDRSTRLEN], moteaddr_str[32];
+    char ipstr[INET6_ADDRSTRLEN];//, moteaddr_str[32];
     MOTE_SHORT_ADDR received, sendbuf, *ptr;
     struct sockaddr_in6 from;
     NODE *cur;
@@ -84,11 +84,11 @@ static int ushortid_server(unsigned int port)
         }
 
         memcpy(&received, buf, sizeof(received));
-        sprintf(moteaddr_str, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)buf[0], (unsigned char)buf[1], (unsigned char)buf[2], (unsigned char)buf[3], (unsigned char)buf[4], (unsigned char)buf[5], (unsigned char)buf[6], (unsigned char)buf[7]);
-        printf("[INFO] recv from %s, (%s => %u)\n", ipstr, moteaddr_str, received.id);
+        //sprintf(moteaddr_str, "%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", (unsigned char)buf[0], (unsigned char)buf[1], (unsigned char)buf[2], (unsigned char)buf[3], (unsigned char)buf[4], (unsigned char)buf[5], (unsigned char)buf[6], (unsigned char)buf[7]);
+        //printf("[INFO] recv from %s, (%s => %u)\n", ipstr, moteaddr_str, received.id);
         if ((ptr = AVL_Retrieve(treeByAddr, &received)))
         {
-            printf("[INFO] found, (%s => %u)\n", moteaddr_str, ptr->id);
+            //printf("[INFO] found, (%s => %u)\n", moteaddr_str, ptr->id);
         }
         else
         {
@@ -103,14 +103,14 @@ static int ushortid_server(unsigned int port)
             {
                 nextIndex = 1;
             }
-            printf("[INFO] next index = %u\n", nextIndex);
+            //printf("[INFO] next index = %u\n", nextIndex);
 
             received.id = nextIndex;
             ptr = malloc(sizeof(*ptr));
             memcpy(ptr, &received, sizeof(*ptr));
             AVL_Insert(treeById, ptr);
             AVL_Insert(treeByAddr, ptr);
-            printf("[INFO] created, (%s => %u)\n", moteaddr_str, ptr->id);
+            //printf("[INFO] created, (%s => %u)\n", moteaddr_str, ptr->id);
         }
 
         id = ptr->id;
@@ -121,7 +121,7 @@ static int ushortid_server(unsigned int port)
         if (sendsfd >= 0)
         {
             sendto(sendsfd, &sendbuf, sizeof(sendbuf), 0, (const struct sockaddr *)&from, fromlen);
-            printf("[INFO] %hu => %s (from %s)\n", id, moteaddr_str, ipstr);
+            //printf("[INFO] %hu => %s (from %s)\n", id, moteaddr_str, ipstr);
         }
         close(sendsfd);
     }
