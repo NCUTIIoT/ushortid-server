@@ -31,10 +31,15 @@ static void wair_thread(pthread_t *outPid)
     }
 }
 
-int main()
+unsigned int nRoots;
+char **roots;
+int main(int argc, char **argv)
 {
     pthread_t ushortid_svr, uhurricane_listener;
     unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003;
+
+    nRoots = argc - 1;
+    roots = argv + 1;
 
     launch_thread(&ushortid_svr, ushortid_server_entry, &ushortid_svr_port);
     launch_thread(&uhurricane_listener, uhurricane_listener_entry, &uhurricane_listener_port);
