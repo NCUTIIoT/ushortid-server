@@ -143,10 +143,9 @@ const unsigned char *ushortid_server_getAddrById(unsigned short id)
 {
     MOTE_SHORT_ADDR key, *ptr;
 
-    ((unsigned char *)(&(key.id)))[0] = (id & 0xFF00) >> 8;
-    ((unsigned char *)(&(key.id)))[1] = (id & 0x00FF) >> 0;
+    key.id = id;
 
-    ptr = AVL_Retrieve(treeByAddr, &key);
+    ptr = AVL_Retrieve(treeById, &key);
     if (ptr)
         return ptr->addr64b;
     else
