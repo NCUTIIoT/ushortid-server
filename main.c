@@ -5,6 +5,7 @@
 
 #include "ushortid-server.h"
 #include "uhurricane-listener.h"
+#include "ga-timer.h"
 
 static void launch_thread(pthread_t *outPid, void *(*entry)(void *), unsigned int *port)
 {
@@ -18,7 +19,7 @@ static void launch_thread(pthread_t *outPid, void *(*entry)(void *), unsigned in
     }
 }
 
-static void wair_thread(pthread_t *outPid)
+static void wait_thread(pthread_t *outPid)
 {
     void *s;
     int r;
@@ -36,8 +37,8 @@ unsigned char **roots;
 int main(int argc, char **argv)
 {
     unsigned int buf[8];
-    pthread_t ushortid_svr, uhurricane_listener;
-    unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003, i, j;
+    pthread_t ushortid_svr, uhurricane_listener, ga_timer;
+    unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003, ga_timer_interval = 3, i, j;
 
     nRoots = argc - 1;
     roots = (unsigned char **)malloc(sizeof(*roots) * nRoots);
@@ -62,9 +63,11 @@ int main(int argc, char **argv)
 
     launch_thread(&ushortid_svr, ushortid_server_entry, &ushortid_svr_port);
     launch_thread(&uhurricane_listener, uhurricane_listener_entry, &uhurricane_listener_port);
+    launch_thread(&ga_timer, ga_timer_entry, &ga_timer_interval);
 
-    wair_thread(&ushortid_svr);
-    wair_thread(&uhurricane_listener);
+    wait_thread(&ushortid_svr);
+    wait_thread(&uhurricane_listener);
+    wait_thread(&ga_timer);
 
     return 0;
 }

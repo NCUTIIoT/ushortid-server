@@ -3,9 +3,9 @@ CC=gcc
 CFLAGS=-Wall -Wextra -g3
 LFLAGS=
 
-OBJS=avl.o main.o ushortid-server.o uhurricane-listener.o
-DEPS=avl.h ushortid-server.h uhurricane-listener.h
-LIBS=-lpthread
+OBJS=avl.o chrom.o conn.o ga-timer.o input.o main.o population.o selector.o simulation.o uhurricane-listener.o ushortid-server.o wnode.o
+DEPS=avl.h conn.h population.h simulation.h ushortid-server.h chrom.h input.h selector.h uhurricane-listener.h wnode.h
+LIBS=-lpthread -lm
 
 BIN=svr
 
