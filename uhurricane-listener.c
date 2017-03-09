@@ -12,7 +12,7 @@
 #include "avl.h"
 #include "ushortid-server.h"
 
-#define TIMEOUT_MOTE_UPDATE 60
+#define TIMEOUT_MOTE_UPDATE 150
 
 typedef struct
 {
