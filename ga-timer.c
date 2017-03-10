@@ -64,8 +64,8 @@ void *ga_timer_entry(void *seconds_uint_ptr)
     while (1)
     {
         sleep(t);
-        uhurricane_listener_writeToFile(MOTES_BIN_FILENAME, MOTES_CONNECTIONS_FILENAME);
-        work();
+        if (uhurricane_listener_writeToFile(MOTES_BIN_FILENAME, MOTES_CONNECTIONS_FILENAME) == 0)
+            work();
     }
     return 0;
 }

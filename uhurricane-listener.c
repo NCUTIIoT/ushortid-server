@@ -213,9 +213,12 @@ static void _traveserC(void *ptr, void *param)
 int uhurricane_listener_writeToFile(const char *mfilename, const char *cfilename)
 {
     unsigned int i;
-    FILE *f = fopen(mfilename, "wb");
+    FILE *f;
     unsigned char rootFlag = 0x01;
 
+    if (AVL_Count(motes) == 0 || AVL_Count(connections) == 0)
+        return -1;
+    f = fopen(mfilename, "wb");
     if (!f)
         return errno;
     for (i = 0; i < nRoots; i += 1)
