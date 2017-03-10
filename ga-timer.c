@@ -1,12 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "population.h"
 #include "input.h"
 #include "simulation.h"
 #include "uhurricane-listener.h"
 #include "ga-timer.h"
+#include "sendtomote.h"
 
 static int handleReadError(const char *filename, int res)
 {
@@ -30,11 +32,15 @@ static int handleReadError(const char *filename, int res)
 
 static void work()
 {
+    char addrbuf[64], msgbuf[16];
     SimData_t SData;
     WirelessNodes_t wnodes;
+    WirelessNode_t *node1, *node2;
     Conns_t conns;
     population_t *pop;
+    Chromo_t *maxScored;
     const char *configFilename = 0;
+    unsigned int i;
 
     wnode_init(&wnodes);
     conn_init(&conns);
@@ -48,7 +54,24 @@ static void work()
     simulation_start(&SData, 0);
 
     pop = SData.result;
-    printChrom(population_maxScoreChrom(pop));
+    printChrom((maxScored = population_maxScoreChrom(pop)));
+    if (maxScored)
+    {
+        for (i = 0; i < maxScored->length; i += 1)
+        {
+            node1 = wnode_findByNid(i, &wnodes);
+            if (node1->isRoot != 0)
+                continue; // DAGRoot
+            node2 = wnode_findByNid((maxScored->p)[i], &wnodes);
+            sprintf(addrbuf, "bbbb::%x%x:%x%x:%x%x:%x%x", (node1->addr)[0], (node1->addr)[1], (node1->addr)[2], (node1->addr)[3], (node1->addr)[4], (node1->addr)[5], (node1->addr)[6], (node1->addr)[7]);
+            memset(msgbuf, 0, 8);
+            memcpy(msgbuf + 8, node2->addr, 8);
+            if (sendtomote_send(addrbuf, msgbuf, 15003, 16) != 0)
+            {
+                fprintf(stderr, "[Warning] Send failed.\n");
+            }
+        }
+    }
 
     population_destroy(pop);
     free(pop);
