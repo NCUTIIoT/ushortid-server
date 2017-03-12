@@ -145,7 +145,7 @@ static int uhurricane_listener(unsigned int port)
                     if (neir)
                     {
                         neir->lastUpdate = time(0);
-                        neir->pdr = pdr + neir->pdr;
+                        neir->pdr = pdr;
                         free(nei);
                     }
                     else
