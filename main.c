@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 {
     unsigned int buf[8];
     pthread_t ushortid_svr, uhurricane_listener, ga_timer;
-    unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003, ga_timer_interval = 3, i, j;
+    unsigned int ushortid_svr_port = 15004, uhurricane_listener_port = 15003, ga_timer_interval = 30, i, j;
 
     nRoots = argc - 1;
     roots = (unsigned char **)malloc(sizeof(*roots) * nRoots);
