@@ -55,10 +55,11 @@ void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conn
 {
     Chromo_t *ch;
     scored_chrom_t *sch;
-    unsigned int i, j, k, l, m, n;
+    unsigned int i, j, k, l, m, n, o;
 
     n = wnode_getNodesCount(wnodes);
     m = population->size;
+    o = 0;
     for (l = 0; l < m; l += 1)
     {
         ch = malloc(sizeof(*ch));
@@ -66,6 +67,13 @@ void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conn
         chrom_init(ch, n);
         do
         {
+            if (o > n * n)
+            {
+                chrom_destroy(ch);
+                free(ch);
+                free(sch);
+                return;
+            }
             for (i = 0; i < n; i += 1)
             {
                 j = (unsigned int)(rand() % n);
@@ -85,6 +93,7 @@ void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conn
                 }
                 (ch->p)[i] = j;
             }
+            o += 1;
         } while ((sch->score = fitness_score(ch, conns, wnodes, maxRetransmitTimes)) <= 0.0);
         sch->chrom = ch;
         population_addChrom(population, sch);
