@@ -122,6 +122,16 @@ static int uhurricane_listener(unsigned int port)
                 {
                     n = malloc(sizeof(*n));
                     memcpy(n->addr64b, bufaddr, sizeof(n->addr64b));
+                    r = AVL_Retrieve(motes, n);
+                    if (!r)
+                    {
+                        r = malloc(sizeof(*r));
+                        memcpy(r, n, sizeof(*r));
+                        r->lastUpdate = time(0);
+                        AVL_Insert(motes, r);
+                    }
+                    else
+                        r->lastUpdate = time(0);
                     r = n;
                     if (*((unsigned char *)buf + (i + 4)) > 0)
                         pdr = (double)(*((unsigned char *)buf + (i + 5))) / (double)(*((unsigned char *)buf + (i + 4)));
