@@ -73,6 +73,7 @@ static int uhurricane_listener(unsigned int port)
     const unsigned char *bufaddr;
     ssize_t recvlen, i;
     socklen_t fromlen;
+    unsigned int j;
     unsigned short sid;
 
     int sfd; //socket id
@@ -125,10 +126,18 @@ static int uhurricane_listener(unsigned int port)
                     r = AVL_Retrieve(motes, n);
                     if (!r)
                     {
-                        r = malloc(sizeof(*r));
-                        memcpy(r, n, sizeof(*r));
-                        r->lastUpdate = time(0);
-                        AVL_Insert(motes, r);
+                        for (j = 0; j < nRoots; j += 1)
+                        {
+                            if (memcmp(n->addr64b, roots[j], sizeof(n->addr64b)) == 0)
+                                break;
+                        }
+                        if (j == nRoots)
+                        {
+                            r = malloc(sizeof(*r));
+                            memcpy(r, n, sizeof(*r));
+                            r->lastUpdate = time(0);
+                            AVL_Insert(motes, r);
+                        }
                     }
                     else
                         r->lastUpdate = time(0);
