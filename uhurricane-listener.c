@@ -126,8 +126,7 @@ static int uhurricane_listener(unsigned int port)
                     if (*((unsigned char *)buf + (i + 4)) > 0)
                         pdr = (double)(*((unsigned char *)buf + (i + 5))) / (double)(*((unsigned char *)buf + (i + 4)));
                     else
-                        //pdr = 0.0;
-                        pdr = 1.0 / 256.0;
+                        pdr = 1.0;
                     nei = (MOTE_REPORT_NEI *)malloc(sizeof(*nei));
                     nei->pdr = pdr;
                     if (cmp(c, r) > 0)
