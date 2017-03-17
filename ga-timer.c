@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <time.h>
+#include <pthread.h>
 
 #include "population.h"
 #include "input.h"
@@ -40,6 +42,8 @@ static void work()
     population_t *pop;
     Chromo_t *maxScored;
     const char *configFilename = 0;
+    data_to_mote_t *pkt;
+    pthread_t thread;
     unsigned int i;
 
     wnode_init(&wnodes);
@@ -57,6 +61,7 @@ static void work()
     printChrom((maxScored = population_maxScoreChrom(pop)));
     if (maxScored)
     {
+        srand(time(0));
         for (i = 0; i < maxScored->length; i += 1)
         {
             node1 = wnode_findByNid(i, &wnodes);
@@ -66,10 +71,15 @@ static void work()
             sprintf(addrbuf, "bbbb::%x%x:%x%x:%x%x:%x%x", (node1->addr)[0], (node1->addr)[1], (node1->addr)[2], (node1->addr)[3], (node1->addr)[4], (node1->addr)[5], (node1->addr)[6], (node1->addr)[7]);
             memset(msgbuf, 0, 8);
             memcpy(msgbuf + 8, node2->addr, 8);
-            if (sendtomote_send(addrbuf, msgbuf, 15003, 16) != 0)
-            {
-                fprintf(stderr, "[Warning] Send failed.\n");
-            }
+            pkt = (data_to_mote_t*)malloc(sizeof(*pkt));
+            pkt->moteaddr = strdup(addrbuf);
+            pkt->msg = (const char *)malloc(16);
+            memcpy((char *)pkt->msg, msgbuf, 16);
+            pkt->dstport = 15003;
+            pkt->msglen = 16;
+            pkt->delayInMS = ((rand() % 10) + 1) * 1000000;
+            pthread_create(&thread, 0, sendtomote_send_entry, (void *)pkt);
+            pthread_detach(thread);
         }
     }
 

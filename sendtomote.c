@@ -6,7 +6,9 @@
 #include <netdb.h>
 #include <unistd.h>
 
-int sendtomote_send(const char *moteaddr, const char *msg, unsigned int dstport, size_t msglen)
+#include "sendtomote.h"
+
+static int sendtomote_send(const char *moteaddr, const char *msg, unsigned int dstport, size_t msglen)
 {
     char dstport_s[8];
     struct addrinfo hints, *result;
@@ -30,4 +32,15 @@ int sendtomote_send(const char *moteaddr, const char *msg, unsigned int dstport,
     close(sfd);
 
     return (sendlen == msglen) ? 0 : 1;
+}
+
+void *sendtomote_send_entry(void *ptr)
+{
+    data_to_mote_t *d = (data_to_mote_t *)ptr;
+    usleep(d->delayInMS);
+    sendtomote_send(d->moteaddr, d->msg, d->dstport, d->msglen);
+    free((char *)d->moteaddr);
+    free((char *)d->msg);
+    free(d);
+    return 0;
 }
