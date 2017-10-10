@@ -49,7 +49,8 @@ static AVL_TREE *treeById, *treeByAddr;
 static int ushortid_server(unsigned int port)
 {
     char buf[256];
-    char ipstr[INET6_ADDRSTRLEN];//, moteaddr_str[32];
+    char ipstr[INET6_ADDRSTRLEN]; //, moteaddr_str[32];
+    char _sendbuf[16];
     MOTE_SHORT_ADDR received, sendbuf, *ptr;
     struct sockaddr_in6 from;
     NODE *cur;
@@ -77,9 +78,14 @@ static int ushortid_server(unsigned int port)
     {
         inet_ntop(from.sin6_family, &(from.sin6_addr), ipstr, sizeof(ipstr));
         //printf("recvfrom %s:%u\n", ipstr, port);
-        if (recvlen != sizeof(received))
+        if (recvlen != sizeof(received) + 1)
         {
             printf("[ERROR] Protocol error(datagram size=%i) from %s, port=%hu.\n", (int)recvlen, ipstr, ntohs(from.sin6_port));
+            continue;
+        }
+        else if (buf[sizeof(received)] != 0)
+        {
+            printf("[ERROR] Protocol error(type = %i) from %s, port=%hu.\n", (int)buf[sizeof(received)], ipstr, ntohs(from.sin6_port));
             continue;
         }
 
@@ -117,10 +123,12 @@ static int ushortid_server(unsigned int port)
         memcpy(&(sendbuf.addr64b), ptr->addr64b, sizeof(sendbuf.addr64b));
         ((unsigned char *)(&(sendbuf.id)))[0] = (id & 0xFF00) >> 8;
         ((unsigned char *)(&(sendbuf.id)))[1] = (id & 0x00FF) >> 0;
+        memcpy(_sendbuf, &sendbuf, sizeof(sendbuf));
+        _sendbuf[sizeof(sendbuf)] = 1; // Reply
         sendsfd = socket(AF_INET6, SOCK_DGRAM, 0);
         if (sendsfd >= 0)
         {
-            sendto(sendsfd, &sendbuf, sizeof(sendbuf), 0, (const struct sockaddr *)&from, fromlen);
+            sendto(sendsfd, _sendbuf, sizeof(sendbuf) + 1, 0, (const struct sockaddr *)&from, fromlen);
             //printf("[INFO] %hu => %s (from %s)\n", id, moteaddr_str, ipstr);
         }
         close(sendsfd);
