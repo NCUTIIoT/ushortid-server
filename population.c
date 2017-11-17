@@ -1,8 +1,8 @@
 #include "selector.h"
 
-#include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 static int __cmp_f(void *a, void *b)
 {
@@ -51,7 +51,7 @@ int population_addChrom(population_t *population, scored_chrom_t *sch)
     return r;
 }
 
-void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conns_t *conns, unsigned int maxRetransmitTimes)
+void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conns_t *conns, unsigned int maxRetransmitTimes, unsigned int nAvailableSlots)
 {
     Chromo_t *ch;
     scored_chrom_t *sch;
@@ -94,13 +94,13 @@ void population_firstGen(population_t *population, WirelessNodes_t *wnodes, Conn
                 (ch->p)[i] = j;
             }
             o += 1;
-        } while ((sch->score = fitness_score(ch, conns, wnodes, maxRetransmitTimes)) <= 0.0);
+        } while ((sch->score = fitness_score(ch, conns, wnodes, maxRetransmitTimes, nAvailableSlots)) <= 0.0);
         sch->chrom = ch;
         population_addChrom(population, sch);
     }
 }
 
-void population_nextGen(population_t *p, population_t *childGen, WirelessNodes_t *wnodes, Conns_t *conns, unsigned int maxRetransmitTimes)
+void population_nextGen(population_t *p, population_t *childGen, WirelessNodes_t *wnodes, Conns_t *conns, unsigned int maxRetransmitTimes, unsigned int nAvailableSlots)
 {
     double mutateRate = 0.05;
     Chromo_t *ch;
@@ -138,7 +138,7 @@ void population_nextGen(population_t *p, population_t *childGen, WirelessNodes_t
                 m += 1;
                 if (m >= wn)
                     break;
-            } while (fitness_score(ch, conns, wnodes, maxRetransmitTimes) <= 0.0);
+            } while (fitness_score(ch, conns, wnodes, maxRetransmitTimes, nAvailableSlots) <= 0.0);
             if (m >= wn)
                 (ch->p)[l] = backup;
         }
@@ -146,7 +146,7 @@ void population_nextGen(population_t *p, population_t *childGen, WirelessNodes_t
         sch = malloc(sizeof(*sch));
 
         sch->chrom = ch;
-        sch->score = fitness_score(ch, conns, wnodes, maxRetransmitTimes);
+        sch->score = fitness_score(ch, conns, wnodes, maxRetransmitTimes, nAvailableSlots);
         if (sch->score < a->score || sch->score < b->score)
         {
             i -= 1;

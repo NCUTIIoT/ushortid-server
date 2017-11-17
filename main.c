@@ -1,11 +1,11 @@
-#include <stdlib.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
-#include "ushortid-server.h"
-#include "uhurricane-listener.h"
 #include "ga-timer.h"
+#include "uhurricane-listener.h"
+#include "ushortid-server.h"
 
 static void launch_thread(pthread_t *outPid, void *(*entry)(void *), unsigned int *port)
 {

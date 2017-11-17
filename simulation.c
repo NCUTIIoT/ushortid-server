@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
@@ -13,6 +13,7 @@ void simulation_start(SimData_t *d, int verbose)
     double thres = d->thres;
     unsigned int maxRetransmitTimes = d->maxRetransmitTimes;
     unsigned int noImprovementThres = d->noImprovementThres;
+    unsigned int nAvailableSlots = d->nAvailableSlots;
     unsigned int popSize = d->popSize;
     unsigned int c;
 
@@ -21,14 +22,14 @@ void simulation_start(SimData_t *d, int verbose)
     population_init(pop, popSize);
 
     srand(time(0) + clock());
-    population_firstGen(pop, wnodes, conns, maxRetransmitTimes);
+    population_firstGen(pop, wnodes, conns, maxRetransmitTimes, nAvailableSlots);
     if (verbose != 0)
         printf("avg = %lf, max = %lf\n", population_avgScore(pop), population_maxScore(pop));
     c = 0;
     while (population_maxScore(pop) < thres)
     {
         population_init(child, popSize);
-        population_nextGen(pop, child, wnodes, conns, maxRetransmitTimes);
+        population_nextGen(pop, child, wnodes, conns, maxRetransmitTimes, nAvailableSlots);
         if (population_avgScore(pop) < population_avgScore(child))
         {
             population_destroy(pop);

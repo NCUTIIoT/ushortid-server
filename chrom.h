@@ -12,8 +12,8 @@ typedef struct
 void chrom_init(Chromo_t *c, unsigned int length);
 void chrom_destroy(Chromo_t *c);
 
-double fitness_pathScore(Chromo_t *c, Conns_t *conns, WirelessNodes_t *wnodes, unsigned int index, unsigned int nTransmissionTimes);
-double fitness_score(Chromo_t *c, Conns_t *conns, WirelessNodes_t *wnodes, unsigned int nTransmissionTimes);
+double fitness_pathScore(Chromo_t *c, Conns_t *conns, WirelessNodes_t *wnodes, unsigned int *referencedCount, unsigned int index, unsigned int nTransmissionTimes, unsigned int nAvailableSlots);
+double fitness_score(Chromo_t *c, Conns_t *conns, WirelessNodes_t *wnodes, unsigned int nTransmissionTimes, unsigned int nAvailableSlots);
 
 void printChrom(Chromo_t *a);
 

@@ -12,6 +12,7 @@ typedef struct
     unsigned int popSize;
     unsigned int maxRetransmitTimes;
     unsigned int noImprovementThres;
+    unsigned int nAvailableSlots;
 } SimData_t;
 
 void simulation_start(SimData_t *d, int verbose);

@@ -70,6 +70,7 @@ int input_getConfig(SimData_t *SData, const char *filename)
     double thres = 0.918621;
     unsigned int maxRetransmitTimes = 4; //首次嘗試 + 重傳3次
     unsigned int noImprovementThres = 64;
+    unsigned int nAvailableSlots = 5;
     unsigned int popSize = 1000;
 
     if (filename != 0)
@@ -93,6 +94,7 @@ int input_getConfig(SimData_t *SData, const char *filename)
     SData->popSize = popSize;
     SData->maxRetransmitTimes = maxRetransmitTimes;
     SData->noImprovementThres = noImprovementThres;
+    SData->nAvailableSlots = nAvailableSlots;
 
     return r;
 }
